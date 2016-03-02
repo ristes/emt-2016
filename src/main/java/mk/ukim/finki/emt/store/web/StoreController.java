@@ -39,6 +39,19 @@ public class StoreController {
     return "index";
   }
 
+  @RequestMapping(value = {"/search"}, method = RequestMethod.GET)
+  public String search(@RequestParam String query,
+                      Model model) {
+    List<Product> products;
+    if(query.trim().isEmpty()) {
+      products=service.findAllProducts();
+    } else {
+      products=service.searchProducts(query);
+    }
+    model.addAttribute("products", products);
+    return "index";
+  }
+
   @RequestMapping(value = {"/category"}, method = RequestMethod.POST)
   public String createCategory(HttpServletRequest request,
                                HttpServletResponse resp,

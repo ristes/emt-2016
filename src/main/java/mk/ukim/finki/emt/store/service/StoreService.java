@@ -11,8 +11,11 @@ public interface StoreService {
 
     List<Product> findAllProducts();
 
+    List<Product> searchProducts(String query);
 
     Category createCategoryByName(String categoryName);
 
     Category deleteCategory(Long id);
+
+
 }

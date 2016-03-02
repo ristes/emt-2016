@@ -4,7 +4,10 @@ import mk.ukim.finki.emt.store.model.Category;
 import mk.ukim.finki.emt.store.model.Product;
 import mk.ukim.finki.emt.store.repository.CategoryRepository;
 import mk.ukim.finki.emt.store.repository.ProductRepository;
+import mk.ukim.finki.emt.store.repository.SearchRepository;
 import mk.ukim.finki.emt.store.service.StoreService;
+import org.apache.lucene.search.Query;
+import org.hibernate.search.query.dsl.BooleanJunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,9 @@ public class StoreServiceImpl implements StoreService {
   @Autowired
   ProductRepository productRepository;
 
+  @Autowired
+  SearchRepository searchRepository;
+
   @Override
   public List<Product> findByCategoryId(Long categoryId) {
     return productRepository.findByCategoryId(categoryId);
@@ -28,6 +34,16 @@ public class StoreServiceImpl implements StoreService {
   @Override
   public List<Product> findAllProducts() {
     return productRepository.findAll();
+  }
+
+  @Override
+  public List<Product> searchProducts(String query) {
+    return searchRepository.searchPhrase(
+      Product.class,
+      query,
+      "name",
+      "description",
+      "category.name");
   }
 
   @Override
