@@ -72,4 +72,24 @@ public class StoreServiceImpl implements StoreService {
       return category;
     }
   }
+
+  @Override
+  public Product createProduct(String name, String description, String categoryName) {
+    Product product = productRepository.findByName(name);
+    if (product == null) {
+      product = new Product();
+      product.name = name;
+      product.description = description;
+      Category category = categoryRepository.findByName(categoryName);
+      product.category = category;
+      productRepository.save(product);
+    }
+    return product;
+  }
+
+  @Override
+  public List<Category> findAllCategories() {
+    return categoryRepository.findAll();
+  }
+
 }
