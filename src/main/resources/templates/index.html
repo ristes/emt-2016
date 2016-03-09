@@ -55,7 +55,7 @@
 
   <div id="page-wrapper">
 
-    <div th:replace="fragments/page"></div>
+    <div th:replace="fragments/page::${content!=null?content:'products'}"></div>
   </div>
   <!-- /#page-wrapper -->
 
