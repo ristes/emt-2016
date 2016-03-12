@@ -22,6 +22,9 @@
       <li>
         <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
       </li>
+      <li th:each="c : ${categories}">
+        <a th:href="@{/index(categoryId=${c.id})}" th:text="${c.name}"></a>
+      </li>
     </ul>
   </div>
   <!-- /.sidebar-collapse -->

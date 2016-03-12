@@ -67,6 +67,30 @@ public class StoreController {
   }
 
   @RequestMapping(value = {"/admin/category"}, method = RequestMethod.POST)
+  public String addCategory(Model model) {
+    model.addAttribute("content", "addCategory");
+    return "index";
+  }
+
+  @RequestMapping(value = {"/admin/product"}, method=RequestMethod.GET)
+  public String addProduct(Model model) {
+    model.addAttribute("content", "addProduct");
+    return "index";
+  }
+
+  @RequestMapping(value = {"/admin/product"}, method = RequestMethod.POST)
+  public String createProduct(HttpServletRequest request,
+                              HttpServletResponse resp,
+                              Model model,
+                              @RequestParam String name,
+                              @RequestParam String description,
+                              @RequestParam String categoryName) {
+    Product product = service.createProduct(name, description, categoryName);
+    model.addAttribute("product", product);
+    return "index";
+  }
+
+  @RequestMapping(value = {"/admin/category"}, method = RequestMethod.POST)
   public String createCategory(HttpServletRequest request,
                                HttpServletResponse resp,
                                Model model,
