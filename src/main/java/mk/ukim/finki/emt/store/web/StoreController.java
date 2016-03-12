@@ -100,8 +100,12 @@ public class StoreController {
 
     products = service.findByCategoryId(category.id);
 
+    List<Category> categories = service.findAllCategories();
     model.addAttribute("category", category);
     model.addAttribute("products", products);
+    // because there is a new category, so we have to override the category
+    // request param from the filter
+    model.addAttribute("categories", categories);
     return "index";
   }
 
