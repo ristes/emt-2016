@@ -20,8 +20,12 @@
         <!-- /input-group -->
       </li>
       <li>
-        <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+        <a href="/admin/category">Add category</a>
       </li>
+      <li>
+        <a href="/admin/product">Add producty</a>
+      </li>
+      <li class="split-pane-divider"></li>
       <li th:each="c : ${categories}">
         <a th:href="@{/index(categoryId=${c.id})}" th:text="${c.name}"></a>
       </li>

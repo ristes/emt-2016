@@ -66,15 +66,15 @@ public class StoreController {
     return "index";
   }
 
-  @RequestMapping(value = {"/admin/category"}, method = RequestMethod.POST)
+  @RequestMapping(value = {"/admin/category"}, method = RequestMethod.GET)
   public String addCategory(Model model) {
-    model.addAttribute("content", "addCategory");
+    model.addAttribute("pageFragment", "addCategory");
     return "index";
   }
 
   @RequestMapping(value = {"/admin/product"}, method=RequestMethod.GET)
   public String addProduct(Model model) {
-    model.addAttribute("content", "addProduct");
+    model.addAttribute("pageFragment", "addProduct");
     return "index";
   }
 
