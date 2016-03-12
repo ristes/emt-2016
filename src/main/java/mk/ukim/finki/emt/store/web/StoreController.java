@@ -4,6 +4,8 @@ import mk.ukim.finki.emt.store.model.Category;
 import mk.ukim.finki.emt.store.model.Product;
 import mk.ukim.finki.emt.store.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,11 +26,23 @@ public class StoreController {
   @Autowired
   StoreService service;
 
+  @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
+  public String login(Model model) {
+
+    model.addAttribute("pageFragment", "login");
+    return "index";
+  }
+
   @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
   public String index(HttpServletRequest request,
                       HttpServletResponse resp,
                       Model model,
                       @RequestParam(required = false) Long categoryId) {
+
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+    System.out.println(auth.getPrincipal());
+
     List<Product> products;
     if (categoryId != null) {
       products = service.findByCategoryId(categoryId);
@@ -52,7 +66,7 @@ public class StoreController {
     return "index";
   }
 
-  @RequestMapping(value = {"/category"}, method = RequestMethod.POST)
+  @RequestMapping(value = {"/admin/category"}, method = RequestMethod.POST)
   public String createCategory(HttpServletRequest request,
                                HttpServletResponse resp,
                                Model model,
@@ -67,7 +81,7 @@ public class StoreController {
     return "index";
   }
 
-  @RequestMapping(value = {"/category/{id}/delete"}, method = RequestMethod.GET)
+  @RequestMapping(value = {"/admin/category/{id}/delete"}, method = RequestMethod.GET)
   public String deleteCategory(Model model,
                                @PathVariable Long id) {
     try {
