@@ -4,8 +4,6 @@ import mk.ukim.finki.emt.store.model.Category;
 import mk.ukim.finki.emt.store.model.Product;
 import mk.ukim.finki.emt.store.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -27,21 +26,19 @@ public class StoreController {
   StoreService service;
 
   @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
-  public String login(Model model) {
-
+  public String login(Model model, HttpSession session) {
+    if (session.getAttribute("user") != null) {
+      return "redirect:/";
+    }
     model.addAttribute("pageFragment", "login");
     return "index";
   }
 
-  @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
+  @RequestMapping(value = {"/index", "/"}, method = RequestMethod.GET)
   public String index(HttpServletRequest request,
                       HttpServletResponse resp,
                       Model model,
                       @RequestParam(required = false) Long categoryId) {
-
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-    System.out.println(auth.getPrincipal());
 
     List<Product> products;
     if (categoryId != null) {
@@ -55,12 +52,12 @@ public class StoreController {
 
   @RequestMapping(value = {"/search"}, method = RequestMethod.GET)
   public String search(@RequestParam String query,
-                      Model model) {
+                       Model model) {
     List<Product> products;
-    if(query.trim().isEmpty()) {
-      products=service.findAllProducts();
+    if (query.trim().isEmpty()) {
+      products = service.findAllProducts();
     } else {
-      products=service.searchProducts(query);
+      products = service.searchProducts(query);
     }
     model.addAttribute("products", products);
     return "index";
@@ -72,7 +69,7 @@ public class StoreController {
     return "index";
   }
 
-  @RequestMapping(value = {"/admin/product"}, method=RequestMethod.GET)
+  @RequestMapping(value = {"/admin/product"}, method = RequestMethod.GET)
   public String addProduct(Model model) {
     model.addAttribute("pageFragment", "addProduct");
     return "index";

@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 /**
  * Created by ristes on 2/24/16.
  */
-@Configuration
+//@Configuration
 public class StaticConfig extends WebMvcConfigurerAdapter {
 
   private static final String[] CLASSPATH_RESOURCE_LOCATIONS = {

@@ -4,5 +4,5 @@ Built-By: ristes
 Implementation-Vendor-Id: mk.ukim.finki.emt
 Created-By: IntelliJ IDEA
 Build-Jdk: 1.8.0_45
-Main-Class: ${start-class}
+Main-Class: mk.ukim.finki.emt.store.StoreApplication
 

@@ -1,0 +1,13 @@
+<div>
+  <h4 th:if="${exception!=null}" class="panel panel-danger" th:text="${exception}"></h4>
+  <h1>Products:</h1>
+
+  <div th:each="prod : ${products}">
+    <div th:text="${prod.name}"></div>
+    <div th:text="${prod.description}"></div>
+    <a href="/index?categoryId=3" th:text="${prod.category.name}">
+    </a>
+    <hr/>
+  </div>
+  <hr/>
+</div>

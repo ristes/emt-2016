@@ -20,6 +20,8 @@ public class User {
 
   public boolean active = true;
 
+  @Enumerated(EnumType.STRING)
+  public Provider provider = Provider.LOCAL;
 
   @Enumerated(EnumType.STRING)
   public Role role;

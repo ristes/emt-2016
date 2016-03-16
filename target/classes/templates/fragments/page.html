@@ -1,36 +1,18 @@
 <div th:fragment="products">
-  <h1 class="text-danger" th:text="${exception}"></h1>
-  Products:
-
-  <div th:each="prod : ${products}">
-    <div th:text="${prod.name}"></div>
-    <div th:text="${prod.description}"></div>
-    <a href="/index?categoryId=3" th:text="${prod.category.name}">
-    </a>
-    <hr/>
-  </div>
-  <hr/>
-
+  <div th:replace="fragments/pages/products"></div>
 </div>
 
-<div th:fragment="addCategory">
-  <div th:replace="fragments/addCategoryForm"></div>
-</div>
 
 <div th:fragment="login">
-  <div class="row">
-    <div class="col-md-12">
-      <form action="/doLogin" method="POST">
-        Username: <input type="text" name="username"> </input><br/>
-        Password: <input type="password" name="password"> </input>
-        <br/>
-        <input type="submit" value="Login"></input>
-      </form>
-    </div>
-  </div>
+  <div th:replace="fragments/pages/login"></div>
 </div>
 
 
+
+<div th:fragment="addCategory">
+  <div th:replace="fragments/pages/addCategoryForm"></div>
+</div>
+
 <div th:fragment="addProduct">
-  <div th:replace="fragments/addProductForm"></div>
+  <div th:replace="fragments/pages/addProductForm"></div>
 </div>
