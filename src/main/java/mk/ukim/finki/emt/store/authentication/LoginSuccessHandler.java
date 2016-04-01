@@ -1,4 +1,4 @@
-package mk.ukim.finki.emt.store.config;
+package mk.ukim.finki.emt.store.authentication;
 
 import mk.ukim.finki.emt.store.model.Provider;
 import mk.ukim.finki.emt.store.model.Role;
@@ -6,7 +6,7 @@ import mk.ukim.finki.emt.store.model.User;
 import mk.ukim.finki.emt.store.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +17,7 @@ import java.io.IOException;
 /**
  * Created by ristes on 3/15/16.
  */
-public class LoginSuccessHandler implements AuthenticationSuccessHandler {
+public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
   private Provider provider;
   private Role role;
@@ -42,6 +42,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
       userRepository.save(user);
     }
     session.setAttribute("user", user);
-    httpServletResponse.sendRedirect("/");
+    super.onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
   }
 }

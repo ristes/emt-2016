@@ -1,4 +1,4 @@
-package mk.ukim.finki.emt.store.config;
+package mk.ukim.finki.emt.store.authentication;
 
 import mk.ukim.finki.emt.store.model.Provider;
 import mk.ukim.finki.emt.store.model.User;

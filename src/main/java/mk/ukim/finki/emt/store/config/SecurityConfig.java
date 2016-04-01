@@ -1,12 +1,15 @@
 package mk.ukim.finki.emt.store.config;
 
+import mk.ukim.finki.emt.store.authentication.LoginFailureHandler;
+import mk.ukim.finki.emt.store.authentication.LoginSuccessHandler;
+import mk.ukim.finki.emt.store.authentication.OAuth2TokenService;
+import mk.ukim.finki.emt.store.authentication.OAuthClientResource;
 import mk.ukim.finki.emt.store.model.Provider;
 import mk.ukim.finki.emt.store.model.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -22,9 +25,8 @@ import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter;
-import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
-import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
+import org.springframework.security.oauth2.provider.endpoint.TokenEndpointAuthenticationFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -74,8 +76,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .passwordParameter("password")
       .loginProcessingUrl("/doLogin")
       .failureHandler(loginFailureHandler())
+      .successHandler(localSuccessHandler())
       .permitAll();
 
+
+    http.authorizeRequests()
+      .antMatchers("/me", "/oauth/authorize", "/oauth/token", "/user")
+      .authenticated();
 
     http.authorizeRequests()
       .antMatchers("/admin/**")
@@ -118,21 +125,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  @ConfigurationProperties("facebook.client")
-  OAuth2ProtectedResourceDetails facebook() {
-    return new AuthorizationCodeResourceDetails();
+  @ConfigurationProperties("facebook")
+  OAuthClientResource facebook() {
+    return new OAuthClientResource();
   }
 
-  @Bean
-  @ConfigurationProperties("facebook.resource")
-  ResourceServerProperties facebookResource() {
-    return new ResourceServerProperties();
-  }
 
   @Bean
-  @ConfigurationProperties("github.client")
-  OAuth2ProtectedResourceDetails github() {
-    return new AuthorizationCodeResourceDetails();
+  @ConfigurationProperties("github")
+  OAuthClientResource github() {
+    return new OAuthClientResource();
+  }
+
+
+  @Bean
+  @ConfigurationProperties("google")
+  OAuthClientResource google() {
+    return new OAuthClientResource();
   }
 
   @Bean
@@ -146,6 +155,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return new LoginSuccessHandler(Provider.GITHUB, Role.ROLE_CUSTOMER);
   }
 
+  @Bean
+  LoginSuccessHandler googleSuccessHandler() {
+    return new LoginSuccessHandler(Provider.GOOGLE, Role.ROLE_CUSTOMER);
+  }
 
   @Bean
   LoginSuccessHandler facebookSuccessHandler() {
@@ -166,7 +179,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       getOauthFilter(
         "/login/facebook",
         facebook(),
-        facebookResource().getUserInfoUri(),
         facebookSuccessHandler()
       )
     );
@@ -176,8 +188,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       getOauthFilter(
         "/login/github",
         github(),
-        githubResource().getUserInfoUri(),
         githubSuccessHandler()
+      )
+    );
+
+    filters.add(
+      getOauthFilter(
+        "/login/google",
+        google(),
+        googleSuccessHandler()
       )
     );
 
@@ -188,13 +207,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   public Filter getOauthFilter(
     String loginUrl,
-    OAuth2ProtectedResourceDetails client,
-    String userInfoUri,
+    OAuthClientResource client,
     AuthenticationSuccessHandler successHandler) {
-    OAuth2ClientAuthenticationProcessingFilter oauthFilter = new OAuth2ClientAuthenticationProcessingFilter(loginUrl);
-    OAuth2RestTemplate template = new OAuth2RestTemplate(client, oauth2ClientContext);
+    OAuth2ClientAuthenticationProcessingFilter oauthFilter =
+      new OAuth2ClientAuthenticationProcessingFilter(loginUrl);
+    OAuth2RestTemplate template = new OAuth2RestTemplate(client.getClient(), oauth2ClientContext);
     oauthFilter.setRestTemplate(template);
-    oauthFilter.setTokenServices(new UserInfoTokenServices(userInfoUri, client.getClientId()));
+    oauthFilter.setTokenServices(
+      new OAuth2TokenService(
+        client.getResource().getUserInfoUri(),
+        client.getClient().getClientId()
+      )
+    );
     oauthFilter.setAuthenticationSuccessHandler(successHandler);
     return oauthFilter;
   }

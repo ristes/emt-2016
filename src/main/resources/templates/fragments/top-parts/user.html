@@ -5,6 +5,7 @@
   </a>
   <a th:if="${user!=null}" class="dropdown-toggle" data-toggle="dropdown" href="#">
     <i class="fa fa-user fa-fw"></i>
+    <span th:text="${user.username}"></span>
     <i class="fa fa-caret-down"></i>
   </a>
   <ul th:if="${user!=null}" class="dropdown-menu dropdown-user">

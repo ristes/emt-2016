@@ -6,15 +6,15 @@ import mk.ukim.finki.emt.store.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by slobodanka on 2/17/2016.
@@ -24,6 +24,14 @@ public class StoreController {
 
   @Autowired
   StoreService service;
+
+  @RequestMapping(value = { "/user", "/me" },produces = "application/json")
+  @ResponseBody
+  public Map<String, String> user(Principal principal) {
+    Map<String, String> map = new LinkedHashMap();
+    map.put("name", principal.getName());
+    return map;
+  }
 
   @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
   public String login(Model model, HttpSession session) {
