@@ -26,10 +26,11 @@ import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
-import org.springframework.security.oauth2.provider.endpoint.TokenEndpointAuthenticationFilter;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.web.filter.CompositeFilter;
 import org.springframework.web.filter.RequestContextFilter;
 
@@ -93,7 +94,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .permitAll();
 
     http.addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
+    http.addFilterAfter(oauth2AuthenticationFilter(), SessionManagementFilter.class);
 
+  }
+
+  private Filter oauth2AuthenticationFilter() {
+    OAuth2AuthenticationProcessingFilter filter = new OAuth2AuthenticationProcessingFilter();
+    filter.setStateless(false);
+    return filter;
   }
 
   @Bean
