@@ -45,4 +45,6 @@ public class Product {
   @ManyToOne
   @IndexedEmbedded
   public Category category;
+
+  public double price;
 }

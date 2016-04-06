@@ -98,9 +98,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   }
 
-  private Filter oauth2AuthenticationFilter() {
+  private Filter oauth2AuthenticationFilter() throws Exception {
     OAuth2AuthenticationProcessingFilter filter = new OAuth2AuthenticationProcessingFilter();
     filter.setStateless(false);
+    filter.setAuthenticationManager(authenticationManager());
     return filter;
   }
 
