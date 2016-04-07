@@ -49,12 +49,12 @@ public class SpringWebShowcaseApplicationTests {
     CreditCard creditCard = new CreditCard();
     creditCard.setBillingAddress(billingAddress);
     creditCard.setCvv2(111);
-    creditCard.setExpireMonth(11);
-    creditCard.setExpireYear(2018);
+    creditCard.setExpireMonth(06);
+    creditCard.setExpireYear(2020);
     creditCard.setFirstName("Joe");
     creditCard.setLastName("Shopper");
-    creditCard.setNumber("5500005555555559");
-    creditCard.setType("mastercard");
+    creditCard.setNumber("4032030455141821");
+    creditCard.setType("visa");
 
     paypalService.executeCreditCardPayment(billingAddress, creditCard, products);
   }
