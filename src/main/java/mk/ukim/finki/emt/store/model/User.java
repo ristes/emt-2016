@@ -18,6 +18,8 @@ public class User {
 
   public String password;
 
+  public String email;
+
   public boolean active = true;
 
   @Enumerated(EnumType.STRING)
