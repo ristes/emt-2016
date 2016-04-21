@@ -1,5 +1,5 @@
-
-<ul class="nav navbar-top-links navbar-right">
+<!DOCTYPE html>
+<ul class="nav navbar-top-links navbar-right" xmlns:th="http://www.thymeleaf.org">
   <li class="dropdown">
     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
       <i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
@@ -190,6 +190,6 @@
     <!-- /.dropdown-alerts -->
   </li>
   <!-- /.dropdown -->
-  <li th:replace="/fragments/top-parts/user"></li>
+  <li th:replace="fragments/parts/user"></li>
   <!-- /.dropdown -->
 </ul>

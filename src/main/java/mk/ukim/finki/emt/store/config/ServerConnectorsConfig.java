@@ -7,10 +7,6 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by ristes on 3/15/16.
@@ -48,15 +44,15 @@ public class ServerConnectorsConfig {
       connector.setSecure(true);
       connector.setPort(sslPort);
 
-      File keystore = new ClassPathResource(keyStore).getFile();
+
       protocol.setSSLEnabled(true);
-      protocol.setKeystoreFile(keystore.getAbsolutePath());
+      protocol.setKeystoreFile(keyStore);
       protocol.setKeystoreType(keyStoreType);
       protocol.setKeyAlias(keyAlias);
       protocol.setKeystorePass(keyStorePassword);
 
       return connector;
-    } catch (IOException ex) {
+    } catch (Exception ex) {
       throw new IllegalStateException("can't access keystore: [" + "keystore"
         + "] or truststore: [" + "keystore" + "]", ex);
     }

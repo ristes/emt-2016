@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -14,6 +15,7 @@ import java.util.Properties;
  * Created by ristes on 4/13/16.
  */
 @Configuration
+@ImportResource("classpath:config/mail-integration.xml")
 public class MailConfig {
 
   public static final String MAIL_PREFIX = "app.mail.";
@@ -55,7 +57,7 @@ public class MailConfig {
     return sender;
   }
 
-  private Properties loadProperties() {
+  public Properties loadProperties() {
     Properties properties = new Properties();
     properties.setProperty(MAIL_TRANSPORT_PROTOCOL, mailPropertiesConfig.getProperty(MAIL_TRANSPORT_PROTOCOL));
     properties.setProperty(MAIL_SMTP_AUTH, mailPropertiesConfig.getProperty(MAIL_SMTP_AUTH));

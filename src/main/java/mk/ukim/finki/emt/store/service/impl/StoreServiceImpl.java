@@ -6,12 +6,15 @@ import mk.ukim.finki.emt.store.repository.CategoryRepository;
 import mk.ukim.finki.emt.store.repository.ProductRepository;
 import mk.ukim.finki.emt.store.repository.SearchRepository;
 import mk.ukim.finki.emt.store.service.StoreService;
-import org.apache.lucene.search.Query;
-import org.hibernate.search.query.dsl.BooleanJunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -74,14 +77,19 @@ public class StoreServiceImpl implements StoreService {
   }
 
   @Override
-  public Product createProduct(String name, String description, String categoryName) {
+  public Product createProduct(String name, String description, String categoryName, MultipartFile picture) throws IOException, SQLException {
     Product product = productRepository.findByName(name);
     if (product == null) {
+      Blob pictureBlob = null;
+      if (picture != null && "image/png".equals(picture.getContentType())) {
+        pictureBlob = new SerialBlob(picture.getBytes());
+      }
       product = new Product();
       product.name = name;
       product.description = description;
       Category category = categoryRepository.findByName(categoryName);
       product.category = category;
+      product.picture = pictureBlob;
       productRepository.save(product);
     }
     return product;
@@ -90,6 +98,11 @@ public class StoreServiceImpl implements StoreService {
   @Override
   public List<Category> findAllCategories() {
     return categoryRepository.findAll();
+  }
+
+  @Override
+  public Product findProductById(Long productId) {
+    return productRepository.findOne(productId);
   }
 
 }

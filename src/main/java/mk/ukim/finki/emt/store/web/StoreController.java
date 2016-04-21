@@ -3,15 +3,20 @@ package mk.ukim.finki.emt.store.web;
 import mk.ukim.finki.emt.store.model.Category;
 import mk.ukim.finki.emt.store.model.Product;
 import mk.ukim.finki.emt.store.service.StoreService;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.security.Principal;
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +30,7 @@ public class StoreController {
   @Autowired
   StoreService service;
 
-  @RequestMapping(value = { "/user", "/me" },produces = "application/json")
+  @RequestMapping(value = {"/user", "/me"}, produces = "application/json")
   @ResponseBody
   public Map<String, String> user(Principal principal) {
     Map<String, String> map = new LinkedHashMap();
@@ -89,10 +94,29 @@ public class StoreController {
                               Model model,
                               @RequestParam String name,
                               @RequestParam String description,
-                              @RequestParam String categoryName) {
-    Product product = service.createProduct(name, description, categoryName);
+                              @RequestParam String categoryName,
+                              MultipartFile picture) throws IOException, SQLException {
+
+    Product product = service.createProduct(name, description, categoryName, picture);
     model.addAttribute("product", product);
     return "index";
+  }
+
+  @RequestMapping(value = {"/product/{id}/picture"}, method = RequestMethod.GET)
+  public void productPicture(HttpServletResponse response, @PathVariable Long id) throws IOException, SQLException {
+    OutputStream out = response.getOutputStream();
+    Product product = service.findProductById(id);
+    if (product == null || product.picture == null) {
+      return;
+    }
+    String contentDisposition = String.format("inline;filename=\"%s\"",
+      product.name + ".png?productId=" + product.id);
+    response.setHeader("Content-Disposition", contentDisposition);
+    response.setContentType("image/png");
+    response.setContentLength((int) product.picture.length());
+    IOUtils.copy(product.picture.getBinaryStream(), out);
+    out.flush();
+    out.close();
   }
 
   @RequestMapping(value = {"/admin/category"}, method = RequestMethod.POST)
