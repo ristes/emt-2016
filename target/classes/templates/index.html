@@ -52,7 +52,16 @@
     <div th:replace="fragments/sidebar"></div>
   </nav>
 
+
   <div id="page-wrapper" style="padding: 20px;">
+
+    <div id="chatContainer">
+
+
+    </div>
+    <input id="chatText" type="text"></input>
+    <button id="sendText" value="Send">Send</button>
+
     <div th:replace="fragments/page::${pageFragment!=null? pageFragment : 'products'}"></div>
   </div>
   <!-- /#page-wrapper -->
@@ -68,6 +77,10 @@
 
 <!-- Custom Theme JavaScript -->
 <script src="/js/sb-admin-2.js"></script>
+
+<script src="/js/sockjs.js"></script>
+<script src="/js/stomp.js"></script>
+<script src="/js/chat.js"></script>
 
 </body>
 

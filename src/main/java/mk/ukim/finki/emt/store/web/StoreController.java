@@ -1,8 +1,11 @@
 package mk.ukim.finki.emt.store.web;
 
+import mk.ukim.finki.emt.store.config.WebSocketConfig;
 import mk.ukim.finki.emt.store.model.Category;
+import mk.ukim.finki.emt.store.model.ChatMessage;
 import mk.ukim.finki.emt.store.model.Product;
 import mk.ukim.finki.emt.store.service.StoreService;
+import mk.ukim.finki.emt.store.service.WebSocketService;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +20,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.Principal;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +34,21 @@ public class StoreController {
 
   @Autowired
   StoreService service;
+
+  @Autowired
+  WebSocketService webSocketService;
+
+  @RequestMapping(value = "/send123", method = RequestMethod.POST, produces = "application/json")
+  @ResponseBody
+  public void send(@RequestParam String user, @RequestParam String message) {
+    ChatMessage chatMessage = new ChatMessage();
+    chatMessage.user = user;
+    chatMessage.message = message;
+    chatMessage.time = DateTimeFormatter
+      .ofPattern("dd.MM.yyyy hh:mm")
+      .format(LocalDateTime.now());
+    webSocketService.send(WebSocketConfig.DEFAULT_TOPIC, chatMessage);
+  }
 
   @RequestMapping(value = {"/user", "/me"}, produces = "application/json")
   @ResponseBody

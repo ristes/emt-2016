@@ -62,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   protected void configure(HttpSecurity http) throws Exception {
-//    http.csrf().disable();
+    http.csrf().disable();
 
     http.requiresChannel().anyRequest().requiresSecure();
 
@@ -93,6 +93,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http.authorizeRequests()
       .antMatchers("/**")
       .permitAll();
+
+
 
     http.addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
     http.addFilterAfter(oauth2AuthenticationFilter(), SessionManagementFilter.class);
